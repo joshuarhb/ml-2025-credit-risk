@@ -1,0 +1,7 @@
+/data/
+/models/*.bin
+/models/*.pkl
+/models/*.json
+**/__pycache__/
+.ipynb_checkpoints/
+*.log
