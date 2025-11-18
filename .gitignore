@@ -1,7 +1,9 @@
-/data/
-/models/*.bin
-/models/*.pkl
-/models/*.json
+data/
+models/*.bin
+models/*.pkl
+models/*.json
+slurm_outputs/
+slurm_errors/
 **/__pycache__/
 .ipynb_checkpoints/
 *.log
