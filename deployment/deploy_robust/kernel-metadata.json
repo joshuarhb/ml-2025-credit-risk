@@ -1,0 +1,17 @@
+{
+  "id": "joshuarhb/home-credit-final-check-submit",
+  "title": "Home Credit Final Check Submit",
+  "code_file": "submit_robust.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": false,
+  "dataset_sources": [
+    "joshuarhb/hmoe-credit-robust-model"
+  ],
+  "competition_sources": [
+    "home-credit-credit-risk-model-stability"
+  ],
+  "kernel_sources": []
+}
