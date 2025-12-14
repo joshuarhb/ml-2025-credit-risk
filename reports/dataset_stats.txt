@@ -1,0 +1,137 @@
+=== HOME CREDIT DATASET STATISTICS ===
+
+📂 File: train_applprev_1_0.csv
+   - Dimensions: 3,887,684 rows x 41 columns
+   - Columns: case_id, actualdpd_943P, annuity_853A, approvaldate_319D, byoccupationinc_3656910L ...
+------------------------------
+📂 File: train_applprev_1_1.csv
+   - Dimensions: 2,638,295 rows x 41 columns
+   - Columns: case_id, actualdpd_943P, annuity_853A, approvaldate_319D, byoccupationinc_3656910L ...
+------------------------------
+📂 File: train_applprev_2.csv
+   - Dimensions: 14,075,487 rows x 6 columns
+   - Columns: case_id, cacccardblochreas_147M, conts_type_509L, credacc_cards_status_52L, num_group1 ...
+------------------------------
+📂 File: train_base.csv
+   - Dimensions: 1,526,659 rows x 5 columns
+   - Columns: case_id, date_decision, MONTH, WEEK_NUM, target ...
+------------------------------
+📂 File: train_credit_bureau_a_1_0.csv
+   - Dimensions: 4,108,212 rows x 79 columns
+   - Columns: case_id, annualeffectiverate_199L, annualeffectiverate_63L, classificationofcontr_13M, classificationofcontr_400M ...
+------------------------------
+📂 File: train_credit_bureau_a_1_1.csv
+   - Dimensions: 6,009,192 rows x 79 columns
+   - Columns: case_id, annualeffectiverate_199L, annualeffectiverate_63L, classificationofcontr_13M, classificationofcontr_400M ...
+------------------------------
+📂 File: train_credit_bureau_a_1_2.csv
+   - Dimensions: 3,743,810 rows x 79 columns
+   - Columns: case_id, annualeffectiverate_199L, annualeffectiverate_63L, classificationofcontr_13M, classificationofcontr_400M ...
+------------------------------
+📂 File: train_credit_bureau_a_1_3.csv
+   - Dimensions: 2,079,323 rows x 79 columns
+   - Columns: case_id, annualeffectiverate_199L, annualeffectiverate_63L, classificationofcontr_13M, classificationofcontr_400M ...
+------------------------------
+📂 File: train_credit_bureau_a_2_0.csv
+   - Dimensions: 5,296,031 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_a_2_1.csv
+   - Dimensions: 7,861,809 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_a_2_10.csv
+   - Dimensions: 4,386,062 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_a_2_2.csv
+   - Dimensions: 17,893,536 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_a_2_3.csv
+   - Dimensions: 26,563,901 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_a_2_4.csv
+   - Dimensions: 27,025,737 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_a_2_5.csv
+   - Dimensions: 33,053,760 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_a_2_6.csv
+   - Dimensions: 25,511,332 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_a_2_7.csv
+   - Dimensions: 8,055,986 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_a_2_8.csv
+   - Dimensions: 13,927,071 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_a_2_9.csv
+   - Dimensions: 18,723,227 rows x 19 columns
+   - Columns: case_id, collater_typofvalofguarant_298M, collater_typofvalofguarant_407M, collater_valueofguarantee_1124L, collater_valueofguarantee_876L ...
+------------------------------
+📂 File: train_credit_bureau_b_1.csv
+   - Dimensions: 85,791 rows x 45 columns
+   - Columns: case_id, amount_1115A, classificationofcontr_1114M, contractdate_551D, contractmaturitydate_151D ...
+------------------------------
+📂 File: train_credit_bureau_b_2.csv
+   - Dimensions: 1,286,755 rows x 6 columns
+   - Columns: case_id, num_group1, num_group2, pmts_date_1107D, pmts_dpdvalue_108P ...
+------------------------------
+📂 File: train_debitcard_1.csv
+   - Dimensions: 157,302 rows x 6 columns
+   - Columns: case_id, last180dayaveragebalance_704A, last180dayturnover_1134A, last30dayturnover_651A, num_group1 ...
+------------------------------
+📂 File: train_deposit_1.csv
+   - Dimensions: 145,086 rows x 5 columns
+   - Columns: case_id, amount_416A, contractenddate_991D, num_group1, openingdate_313D ...
+------------------------------
+📂 File: train_other_1.csv
+   - Dimensions: 51,109 rows x 7 columns
+   - Columns: case_id, amtdebitincoming_4809443A, amtdebitoutgoing_4809440A, amtdepositbalance_4809441A, amtdepositincoming_4809444A ...
+------------------------------
+📂 File: train_person_1.csv
+   - Dimensions: 2,973,991 rows x 37 columns
+   - Columns: case_id, birth_259D, birthdate_87D, childnum_185L, contaddr_district_15M ...
+------------------------------
+📂 File: train_person_2.csv
+   - Dimensions: 1,643,410 rows x 11 columns
+   - Columns: case_id, addres_district_368M, addres_role_871L, addres_zip_823M, conts_role_79M ...
+------------------------------
+📂 File: train_static_0_0.csv
+   - Dimensions: 1,003,757 rows x 168 columns
+   - Columns: case_id, actualdpdtolerance_344P, amtinstpaidbefduel24m_4187115A, annuity_780A, annuitynextmonth_57A ...
+------------------------------
+📂 File: train_static_0_1.csv
+   - Dimensions: 522,902 rows x 168 columns
+   - Columns: case_id, actualdpdtolerance_344P, amtinstpaidbefduel24m_4187115A, annuity_780A, annuitynextmonth_57A ...
+------------------------------
+📂 File: train_static_cb_0.csv
+   - Dimensions: 1,500,476 rows x 53 columns
+   - Columns: case_id, assignmentdate_238D, assignmentdate_4527235D, assignmentdate_4955616D, birthdate_574D ...
+------------------------------
+📂 File: train_tax_registry_a_1.csv
+   - Dimensions: 3,275,770 rows x 5 columns
+   - Columns: case_id, amount_4527230A, name_4527232M, num_group1, recorddate_4527225D ...
+------------------------------
+📂 File: train_tax_registry_b_1.csv
+   - Dimensions: 1,107,933 rows x 5 columns
+   - Columns: case_id, amount_4917619A, deductiondate_4917603D, name_4917606M, num_group1 ...
+------------------------------
+📂 File: train_tax_registry_c_1.csv
+   - Dimensions: 3,343,800 rows x 5 columns
+   - Columns: case_id, employername_160M, num_group1, pmtamount_36A, processingdate_168D ...
+------------------------------
+
+=== 📢 THE 'BIG NUMBERS' FOR SLIDES ===
+1. Total Clients (Training):  1,526,659
+2. Total Raw Files:           32
+3. Total Raw Features:        1,139
+4. Total History Records:     226,213,001 (Depth-1 interactions processed)
+5. Avg History per Client:    148.2 records

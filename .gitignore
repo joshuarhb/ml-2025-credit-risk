@@ -1,9 +1,67 @@
-data/
-models/*.bin
-models/*.pkl
-models/*.json
-slurm_outputs/*
-slurm_errors/*
-**/__pycache__/
+# --- Python & System Defaults ---
+__pycache__/
+*.pyc
 .ipynb_checkpoints/
+.DS_Store
+.vscode/
+.idea/
+
+# --- Virtual Environments ---
+.env
+.conda/
+env/
+venv/
+*.egg-info/
+
+# --- Data (CRITICAL: Never commit these) ---
+# Ignore everything in data subfolders
+data/raw/*
+data/processed/*
+# ...but keep the folder structure (if you add .gitkeep files later)
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Ignore loose large files anywhere in the repo
+*.csv
+*.parquet
+*.zip
+*.gz
+*.txt
+# Exception: Keep your requirements and specific text reports
+!requirements.txt
+!environment.yml
+!reports/*.txt
+
+# --- Models ---
+# Ignore binary model files (too large for GitHub)
+*.joblib
+*.pkl
+models/*
+# Exception: If you want to keep the models folder structure
+!models/.gitkeep
+
+# --- Logs & Execution Outputs ---
 *.log
+*.out
+reports/logs/*
+slurm_outputs/
+slurm_errors/
+
+# --- Temporary/Generated Files ---
+submission.csv
+target_distribution.png   # If you generated these in root, ignore them
+roc_curve.png             # (We moved these to reports/figures, which we WANT to keep)
+
+# --- Kaggle Deployment ---
+# Ignore the API key if it's there
+kaggle.json
+
+# Inside deployment folders:
+# Keep the scripts (.py) and metadata (.json)
+# But IGNORE the copied model files (they are duplicates)
+deployment/**/*.joblib
+deployment/**/*.csv
+
+# --- Documentation/Reports ---
+# We generally WANT to track the figures/plots you generated
+!reports/figures/*.png
