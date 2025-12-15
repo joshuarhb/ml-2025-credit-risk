@@ -5,7 +5,9 @@ import os
 import argparse
 import sys
 from sklearn.metrics import roc_auc_score
-from features_advanced import process_applprev_advanced # Import our new tool
+# Ensure these modules exist in your /src or root folder
+from features_advanced import process_applprev_advanced 
+from src.features_bureau import process_bureau_a_1
 
 # --- PARSE ARGUMENTS ---
 parser = argparse.ArgumentParser()
@@ -20,46 +22,58 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 def run_training():
     print(f"🚀 Starting Enhanced Training Run: {args.tag}")
     
-    # 1. Load Base & Static (The standard stuff)
-    print("⏳ Loading Static Data...")
+    # 1. LOAD DATA
+    print("⏳ Loading Base Data...")
     df_base = pd.read_csv(f"{DATA_DIR}/train_base.csv")
-    
-    # Load and concatenate static files
+
+    print("⏳ Loading Static Data...")
     static_files = [f for f in os.listdir(DATA_DIR) if "train_static_0" in f]
-    dfs = [pd.read_csv(os.path.join(DATA_DIR, f)) for f in static_files]
+        
+    dfs = [pd.read_csv(os.path.join(DATA_DIR, f), low_memory=False) for f in static_files]
     df_static = pd.concat(dfs, ignore_index=True)
-    
-    # 2. FEATURE ENGINEERING (The New Part)
+
+    # 2. FEATURE ENGINEERING
+    print("🛠 Processing Internal History (ApplPrev)...")
     df_history = process_applprev_advanced(DATA_DIR)
     
-    # 3. MERGE
+    print("🛠 Processing External History (Bureau)...") 
+    df_bureau = process_bureau_a_1(DATA_DIR)
+    
+    # 3. MERGE EVERYTHING
     print("🔗 Joining Tables...")
     df_train = df_base.merge(df_static, on="case_id", how="left")
     df_train = df_train.merge(df_history, on="case_id", how="left")
+    df_train = df_train.merge(df_bureau, on="case_id", how="left") # <--- NEW MERGE
     
-    # Fill NaN for history (people with no history get 0)
-    # ✅ NEW CORRECT CODE
-    # Fill NaNs for the Advanced Features (total_apps, dpd_max, etc.)
-    # We loop through them to be safe
-    new_features = ["total_apps", "dpd_max", "dpd_mean", "amount_max", "is_refused_sum", "refusal_rate", "avg_loan_amount"]
-
-    for col in new_features:
+    # 4. CLEANING / IMPUTATION
+    print("🧹 Handling Missing Values...")
+    
+    # Fill specific history features (Internal)
+    history_features = ["total_apps", "dpd_max", "dpd_mean", "amount_max", 
+                        "is_refused_sum", "refusal_rate", "avg_loan_amount"]
+    for col in history_features:
         if col in df_train.columns:
             df_train[col] = df_train[col].fillna(0)
+
+    # Fill bureau features (External)
+    # Any column starting with 'bureau_' gets 0 if missing (implies no external record found)
+    bureau_cols = [c for c in df_train.columns if c.startswith("bureau_")]
+    if bureau_cols:
+        df_train[bureau_cols] = df_train[bureau_cols].fillna(0)
     
-    # 4. ROBUST SPLIT (Time-based)
+    # 5. ROBUST SPLIT (Time-based)
     print("✂️ Splitting by Time...")
     df_train["date_decision"] = pd.to_datetime(df_train["date_decision"])
     
     # Sort by date to ensure strict past-vs-future split
     df_train = df_train.sort_values("date_decision")
     
-    # Simple 80/20 Time Split
+    # Simple 90/10 Time Split (90% Train, 10% Valid)
     split_idx = int(len(df_train) * 0.9)
     train = df_train.iloc[:split_idx]
     val = df_train.iloc[split_idx:]
     
-    # Prepare X and y
+    # Define Features
     drop_cols = ["case_id", "target", "date_decision", "WEEK_NUM", "MONTH"]
     features = [c for c in train.columns if c not in drop_cols]
     
@@ -68,24 +82,36 @@ def run_training():
     X_val = val[features]
     y_val = val["target"]
     
-    # Handle Categories
+    # 6. SAFETY CHECK: Drop Constant Columns
+    # If a feature has 0 or 1 unique value, it provides no information and breaks some algos.
+    print("🗑 Checking for constant columns...")
+    drop_candidates = [c for c in X_train.columns if X_train[c].nunique() <= 1]
+    if drop_candidates:
+        print(f"   Dropping {len(drop_candidates)} constant features")
+        X_train = X_train.drop(columns=drop_candidates)
+        X_val = X_val.drop(columns=drop_candidates)
+        features = X_train.columns.tolist() # Update feature list
+    
+    # 7. CATEGORICAL HANDLING
     cat_cols = X_train.select_dtypes(include=['object']).columns.tolist()
+    print(f"   Found {len(cat_cols)} categorical features.")
     for c in cat_cols:
         X_train[c] = X_train[c].astype('category')
         X_val[c] = X_val[c].astype('category')
         
-    print(f"🏋️ Training on {len(features)} features...")
+    print(f"🏋️ Training on {len(features)} final features...")
     
-    # 5. TRAIN (Robust Params)
+    # 8. TRAIN
     model = lgb.LGBMClassifier(
-        n_estimators=1000,
+        n_estimators=1200,      # Slightly increased for more data
         learning_rate=0.03,
         num_leaves=64,
-        colsample_bytree=0.5, # Robustness
+        colsample_bytree=0.5,   # Robustness against overfitting
         subsample=0.8,
-        is_unbalance=True,    # Handle the imbalance
+        is_unbalance=True,      # Handle the default rate imbalance
         metric="auc",
-        n_jobs=16
+        n_jobs=16,
+        verbose=-1              # Reduce log noise
     )
     
     model.fit(
@@ -94,7 +120,7 @@ def run_training():
         callbacks=[lgb.early_stopping(50), lgb.log_evaluation(100)]
     )
     
-    # 6. SAVE ARTIFACTS
+    # 9. SAVE ARTIFACTS
     joblib.dump(model, f"{MODEL_DIR}/model.joblib")
     joblib.dump(features, f"{MODEL_DIR}/features.joblib")
     joblib.dump(cat_cols, f"{MODEL_DIR}/cat_cols.joblib")

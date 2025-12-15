@@ -1,0 +1,16 @@
+{
+  "id": "joshuarhb/home-credit-submit-bureau-v2",
+  "title": "Submit bureau-v2",
+  "code_file": "submit.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": false,
+  "dataset_sources": [
+    "joshuarhb/home-credit-model-bureau-v2",
+    "home-credit-credit-risk-model-stability"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}

@@ -1,9 +1,25 @@
 import pandas as pd
+import joblib
 import os
-import gc
 import glob
+import gc
 import numpy as np
+import sys
 
+# CONFIG - Kaggle Paths
+TEST_DIR = "/kaggle/input/home-credit-credit-risk-model-stability/csv_files/test"
+# Dynamic Model Directory Finding
+try:
+    # Looks for the dataset we uploaded via Slurm
+    MODEL_DIR = [d for d in glob.glob("/kaggle/input/home-credit-model-*")][0]
+except IndexError:
+    MODEL_DIR = "/kaggle/input/home-credit-model-advanced-v1" # Fallback
+
+MODEL_PATH = f"{MODEL_DIR}/model.joblib"
+FEAT_PATH = f"{MODEL_DIR}/features.joblib"
+CAT_PATH = f"{MODEL_DIR}/cat_cols.joblib"
+
+# --- 1. BUREAU LOGIC (Embedded for Kaggle Safety) ---
 def process_bureau_a_1(data_dir):
     """
     Aggregates Credit Bureau A (Depth 1) data.
@@ -125,3 +141,101 @@ def process_bureau_a_1(data_dir):
         final_df.drop(columns=dpd_max_cols, inplace=True)
 
     return final_df
+
+# --- 2. APPLPREV LOGIC ---
+def process_applprev_advanced(data_dir):
+    print("🧠 Engineering Advanced History Features...")
+    files = [f for f in os.listdir(data_dir) if "applprev_1" in f and f.endswith(".csv")]
+    agg_dfs = []
+    
+    for f in files:
+        path = os.path.join(data_dir, f)
+        try: header = pd.read_csv(path, nrows=0).columns.tolist()
+        except: continue
+        
+        col_map = {}
+        for c in header:
+            if c.startswith("actualdpd"): col_map[c] = "dpd"
+            elif c.startswith("credamount"): col_map[c] = "amount"
+            elif c.startswith("status"): col_map[c] = "status"
+        
+        if not col_map: continue
+        load_cols = ["case_id"] + list(col_map.keys())
+        
+        for chunk in pd.read_csv(path, usecols=load_cols, chunksize=50000):
+            chunk = chunk.rename(columns=col_map)
+            chunk["is_refused"] = 0
+            if "status" in chunk.columns:
+                chunk["is_refused"] = chunk["status"].astype(str).str.contains("D", na=False).astype(int)
+            
+            chunk["dpd"] = chunk["dpd"].fillna(0) if "dpd" in chunk.columns else 0
+            chunk["amount"] = chunk["amount"].fillna(0) if "amount" in chunk.columns else 0
+
+            agg = chunk.groupby("case_id").agg({
+                "dpd": ["max", "mean"],
+                "amount": ["max", "sum"],
+                "is_refused": "sum",
+                "case_id": "count"
+            })
+            agg.columns = ['_'.join(col).strip() for col in agg.columns.values]
+            agg.rename(columns={"case_id_count": "total_apps"}, inplace=True)
+            agg_dfs.append(agg)
+        gc.collect()
+
+    if not agg_dfs: return pd.DataFrame(columns=["case_id"]).set_index("case_id")
+
+    full_agg = pd.concat(agg_dfs)
+    final_df = full_agg.groupby("case_id").agg({
+        "dpd_max": "max", "dpd_mean": "mean", "amount_max": "max",
+        "amount_sum": "sum", "is_refused_sum": "sum", "total_apps": "sum"
+    })
+    final_df["refusal_rate"] = final_df["is_refused_sum"] / final_df["total_apps"]
+    final_df["avg_loan_amount"] = final_df["amount_sum"] / final_df["total_apps"]
+    
+    return final_df
+
+# --- 3. MAIN PIPELINE ---
+def run_inference():
+    print("🚀 Starting Inference...")
+    if not os.path.exists(MODEL_PATH):
+        print(f"❌ Model not found at {MODEL_PATH}"); return
+
+    model = joblib.load(MODEL_PATH)
+    features = joblib.load(FEAT_PATH)
+    cat_cols = joblib.load(CAT_PATH)
+    
+    # Load Base
+    df_base = pd.read_csv(f"{TEST_DIR}/test_base.csv")
+    static_files = [f for f in os.listdir(TEST_DIR) if "test_static_0" in f]
+    dfs = [pd.read_csv(os.path.join(TEST_DIR, f), low_memory=False) for f in static_files]
+    if dfs: df_test = df_base.merge(pd.concat(dfs, ignore_index=True), on="case_id", how="left")
+    else: df_test = df_base
+    
+    # Feature Engineering
+    df_history = process_applprev_advanced(TEST_DIR)
+    df_bureau = process_bureau_a_1(TEST_DIR)
+    
+    # Merge
+    if not df_history.empty: df_test = df_test.merge(df_history, on="case_id", how="left")
+    if not df_bureau.empty: df_test = df_test.merge(df_bureau, on="case_id", how="left")
+    
+    # Align Columns (Critical!)
+    missing_cols = list(set(features) - set(df_test.columns))
+    if missing_cols:
+        zeros = pd.DataFrame(0, index=df_test.index, columns=missing_cols)
+        df_test = pd.concat([df_test, zeros], axis=1)
+            
+    X_test = df_test[features]
+    
+    for c in cat_cols:
+        if c in X_test.columns: X_test[c] = X_test[c].astype('category')
+            
+    print("🔮 Predicting...")
+    scores = model.predict_proba(X_test)[:, 1]
+    
+    submission = pd.DataFrame({"case_id": df_test["case_id"], "score": scores})
+    submission.to_csv("submission.csv", index=False)
+    print("✅ Submission Saved")
+
+if __name__ == "__main__":
+    run_inference()
