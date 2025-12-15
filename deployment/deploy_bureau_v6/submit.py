@@ -11,7 +11,7 @@ TEST_DIR = "/kaggle/input/home-credit-credit-risk-model-stability/csv_files/test
 # Dynamic Model Directory Finding
 try:
     # Looks for the dataset we uploaded via Slurm
-    MODEL_DIR = [d for d in glob.glob("/kaggle/input/home-credit-model-")][0]
+    MODEL_DIR = [d for d in glob.glob("/kaggle/input/home-credit-model-bureau-v6")][0]
 except IndexError:
     MODEL_DIR = "/kaggle/input/home-credit-model-advanced-v1" # Fallback
 

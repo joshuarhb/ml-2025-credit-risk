@@ -11,7 +11,7 @@ TEST_DIR = "/kaggle/input/home-credit-credit-risk-model-stability/csv_files/test
 # Dynamic Model Directory Finding
 try:
     # Looks for the dataset we uploaded via Slurm
-    MODEL_DIR = [d for d in glob.glob("/kaggle/input/home-credit-model-")][0]
+    MODEL_DIR = [d for d in glob.glob("/kaggle/input/home-credit-model-*")][0]
 except IndexError:
     MODEL_DIR = "/kaggle/input/home-credit-model-advanced-v1" # Fallback
 
@@ -520,7 +520,7 @@ def process_granular_features(data_dir):
 
 # --- 3. MAIN PIPELINE ---
 def run_inference():
-    print("🚀 Starting Hybrid Inference V4...")
+    print("🚀 Starting Hybrid Inference V5...")
     
     # 1. Load Models & Feature Lists
     print("⏳ Loading Artifacts...")
@@ -581,7 +581,7 @@ def run_inference():
     p_cat = cat_model.predict_proba(X_cat)[:, 1]
     
     # 6. BLEND & SUBMIT
-    final_score = (0.35 * p_lgb) + (0.65 * p_cat)
+    final_score = (p_lgb + p_cat) / 2.0
     
     pd.DataFrame({
         "case_id": df_test["case_id"],

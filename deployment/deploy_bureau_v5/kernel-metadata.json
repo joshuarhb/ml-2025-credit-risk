@@ -1,0 +1,17 @@
+{
+  "id": "joshuarhb/bureau-v5-final-final",
+  "title": "Submit bureau_v5 Full Final Final",
+  "code_file": "submit.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": false,
+  "dataset_sources": [
+    "joshuarhb/home-credit-model-bureau-v5"
+  ],
+  "competition_sources": [
+    "home-credit-credit-risk-model-stability"
+  ],
+  "kernel_sources": []
+}
